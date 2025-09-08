@@ -15,11 +15,12 @@ public class GameManager_Shadow : MonoBehaviour
     public TMP_Text textEnd;
     public Button btnRetry, btnNext;
 
+
     [Header("Gameplay")]
     public List<ShadowTarget> statues = new List<ShadowTarget>();
     public HealthSystem health;
     public float startTime = 60f;     // مدة المرحلة
-    public int level = 1;             // 1 ثم 2
+    public int level = 1;             
     public int wrongDamage = 1;
 
     [Header("Light")]
@@ -51,14 +52,14 @@ public class GameManager_Shadow : MonoBehaviour
     {
         if (statues.Count == 0) statues.AddRange(FindObjectsOfType<ShadowTarget>());
 
-        // ربط الصحة
+       
         if (health != null)
         {
             health.onChange += (cur, max) => textHP.text = $"HP: {cur}/{max}";
             health.onDeath += () => Lose("Out of HP!");
         }
 
-        // ربط الأزرار
+       
         if (btnRetry) btnRetry.onClick.AddListener(() => { SetupLevel(level); RestartCore(); });
         if (btnNext) btnNext.onClick.AddListener(() => { level = Mathf.Min(level + 1, 2); SetupLevel(level); RestartCore(); });
 
@@ -121,25 +122,25 @@ public class GameManager_Shadow : MonoBehaviour
 
     void SetupLevel(int L)
     {
-        // إطفاء كل الCues وتعطيل "الصحيح"
+        
         foreach (var st in statues)
         {
             st.isCorrect = false;
             st.EnableCue(false);
         }
 
-        // اختيار تمثال صحيح عشوائيًا
+        
         correctIndex = (statues.Count > 0) ? Random.Range(0, statues.Count) : -1;
         if (correctIndex >= 0)
         {
             statues[correctIndex].isCorrect = true;
 
-            // تفعيل النتوء في الصحيح فقط وبحجم مختلف حسب المستوى
+           
             float cueScale = (L == 1) ? cueScaleLevel1 : cueScaleLevel2;
             statues[correctIndex].EnableCue(true);
         }
 
-        // اختلاف صعوبة الإضاءة: ضيّق زاوية السبوت وارفعه قليلًا في المستوى 2
+        
         if (spot)
         {
             if (L == 1) { spot.spotAngle = 34f; spot.transform.position = new Vector3(0f, 5f, 3f); }
@@ -152,6 +153,12 @@ public class GameManager_Shadow : MonoBehaviour
        
         if (btnNext) btnNext.gameObject.SetActive(false);
     }
+    public void QuitGame()
+    {
+        Debug.Log("Quit pressed!");
+        Application.Quit();         
+    }
+
 
     void Win()
     {
